@@ -27,7 +27,7 @@ def miniGame():
             if Number < number:
                 messagebox.showinfo(None, 'Ваше число меньше загаданного')
             if Number == number:
-                messagebox.showinfo(None, 'Мои поздравления! Вы победили!')
+                messagebox.showinfo(None, 'Мои поздравления!!! Вы победили!!!')
                 csv_logs.save_logs('Пользователь победил в игре')
                 inputWindow.window.destroy()
             elif i == 3:
