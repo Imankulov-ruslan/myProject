@@ -1,11 +1,11 @@
 from tkinter import messagebox
 from graphics import *
 import csv_logs
+import myProject
 
 def main():
     miniGame()
-    import myProject
-    myProject.main()
+ 
 
 def miniGame():
     import random
@@ -47,6 +47,8 @@ def miniGame():
     btn.grid(2, 1, sticky='wsne')
 
     inputWindow.update_and_show_window()
+
+    myProject.main()
 
 if __name__ == '__main__':
     main()
