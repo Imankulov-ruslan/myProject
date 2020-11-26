@@ -10,7 +10,7 @@ def main():
 def miniGame():
     import random
     number = random.randint(1, 10)
-    inputWindow = CreateWindow('Угадай-Ка')
+    inputWindow = CreateWindow('УгадайКа')
     inputWindow.lable('Попробуйте угадать число от 1 до 10')
     inputWindow.lable.grid(columnspan=2)
     guessNumber = CreateInput(inputWindow.window, 1, 0, 'Введите число в поле')
