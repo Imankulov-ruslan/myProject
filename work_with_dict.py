@@ -1,292 +1,222 @@
-from csv_logs import save_logs
-from graphics import *
-from tkinter import messagebox
-
-mainName = '<<<Работа со словарями>>>'
-name1 = '<Добавление элементов в словарь>'
-name2 = '<Удаление элемента из словаря>'
-name3 = '<Поменять 2 элемента словаря местами>'
-name4 = '<Сложить словарь с другим словарем>'
-name5 = '<Удалить повторяющиеся значения словаря>'
-name6 = '<Очистить словарь>'
-endProgramm = '<Выход в главное меню>'
-
 
 def main():
-    create_dict()
-    global mainWindow
-    mainWindow = CreateWindow(mainName)
-    b = {name1: add_to_dict, name2: del_from_dict, name3: swap_2_elem_in_dict,
-         name4: sum_dict, name5: make_dict_unique, name6: clearDict, endProgramm: quit}
-    for i, j in b.items():
-        CreateButtons(mainWindow.window, i, j).pack(pady=5)
-    mainWindow.update_and_show_window()
+    global mainName, name1, name2, name3, name4, name5, name6
+    mainName = '"Работа со словарями"'
+    name1 = '"Добавление элементов в словарь"'
+    name2 = '"Удаление элемента из словаря"'
+    name3 = '"Поменять 2 элемента словаря местами"'
+    name4 = '"Сложить словарь с другим словарем"'
+    name5 = '"Удалить повторяющиеся значения словаря"'
+    name6 = '"Очистить словарь"'
+    print('Для начала работы создайте ваш словарь')
+    new_list_for_dict(True)
+    newDict()
+    number_input()
 
+# печать меню с доступными операциями
+def print_dict_menu():
+    print(f'''
+*****\t{mainName}\t*****
+Выберите что нужно сделать с вашим словарем:
+1 - {name1}
+2 - {name2}
+3 - {name3}
+4 - {name4}
+5 - {name5}
+6 - {name6}
+0 - Выйти из программы {mainName} в основное меню
+Введите цифру от 0 до 6: ''', end='')
 
-def repeat_func(name, master):
-    repeat = messagebox.askyesno(title="Повтор операции", message="Повторить данную операцию?", master=master)
-    if repeat:
-        save_logs(f'Пользователь повторил операцию: {name}')
-        return repeat
-    save_logs(f'Пользователь завершил операцию: {name}')
-    return repeat
-
-
-def create_dict():
-    create_list()
-    global newDict
-    newDict = dict(newList)
-    save_logs(f'Пользователь создал словарь: "{newDict}"')
-    messagebox.showinfo('Создание словаря', f"Вы создали словарь {newDict}", master=inputWindow.window)
-    inputWindow.window.destroy()
-
+# функция по запуску выбранной операции
+def number_input():
+    while True:
+        print_dict_menu()
+        number = input()
+        if number == '1':
+            save_logs(f'Ползователь выбрал операцию: {name1}')
+            add_to_dict(True)
+        elif number == '2':
+            save_logs(f'Ползователь выбрал операцию: {name2}')
+            del_from_dict(True)
+        elif number == '3':
+            save_logs(f'Ползователь выбрал операцию: {name3}')
+            swap_2_elem_in_dict(True)
+        elif number == '4':
+            save_logs(f'Ползователь выбрал операцию: {name4}')
+            sum_dict(True)
+        elif number == '5':
+            save_logs(f'Ползователь выбрал операцию: {name5}')
+            make_dict_unique(True)
+        elif number == '6':
+            save_logs(f'Ползователь выбрал операцию: {name6}')
+            clearDict()
+        elif number == '0':
+            save_logs(f'Ползователь ввел 0 и завершил программу: {mainName}')
+            print(f'Программа {mainName} завершена')
+            break
+        else:
+            save_logs(f'Ползователь неверно ввел данные')
+            print('Введите только числа от 0 до 6')
+            continue
 
 # создание списка формата [[],[],[]] для преобразования в словарь
-def create_list(repeat=True):
-    global newList
+def new_list_for_dict(repeat):
     while repeat:
-        global inputWindow
-        inputWindow = CreateWindow('Создание словаря')
-        intInput = CreateInput(inputWindow.window, 1, 0, 'Введите кол-во значений словаря')
-
-        def check_input():
+        global newList
+        while True:
             try:
-                values = int(intInput.value.get())
-                if values <= 0:
+                quantity = int(input('Введите кол-во значений словаря\n'))
+                if quantity <= 0: # исключение для того, чтобы словарь не был пустым
                     raise Exception
-                global newList
-                newList = [[] for k in range(values)]
-                j = len(newList)
+                # создание пустых вложенных словарей в кол-во равном quantity
+                newList = [[] for k in range(quantity)]
                 for i in range(len(newList)):
-                    inputWindow = CreateWindow('Создание словаря')
-                    stringInput = CreateInput(inputWindow.window, 0, 0, 'Введите ключ')
-                    stringInput1 = CreateInput(inputWindow.window, 1, 0, 'Введите значение')
-                    button1 = CreateButtons(inputWindow.window, 'Ввод', inputWindow.window.quit)
-                    button1.grid(2, 0, sticky='we', columnspan=2)
-                    inputWindow.update_and_show_window()
-                    newList[i].append(stringInput.value.get())
-                    newList[i].append(stringInput1.value.get())
-                    inputWindow.window.destroy()
-                inputWindow.window.quit()
-
-
+                    newList[i].append(input("Введите ключ\n"))
+                    newList[i].append(input("Введите значение\n"))
+                break
             except:
-                intInput.value.delete(0, END)
-                save_logs(f'Ползователь получил ошибку')
-                messagebox.showerror("Ошибка", "Поле ввода очищено!\nВводите только числа больше нуля")
+                save_logs('Пользователь ввел неверные данные')
+                print("Введены неверные данные, повторите операцию")
+                continue
+        # функция повтора опепрации, выдает True, если введено Y
+        repeat = continue_or_break('Создание словаря')
 
-        button = CreateButtons(inputWindow.window, 'Ввод', check_input)
-        button.grid(2, 0, sticky='wens', columnspan=2)
-        inputWindow.update_and_show_window()
-        repeat = repeat_func('Создание словаря', inputWindow.window)
-
+# Создание словаря из списка
+def newDict():
+    global newDict
+    newDict = dict(newList)
+    print('Ваш  словарь - ', newDict)
+    save_logs(f'Пользователь создал словарь: "{newDict}"')
 
 # вновь запускает создание списка, потом создает словарь для суммирования
 def new_dict_to_sum():
+    new_list_for_dict(True)
     global newDict1
-    create_list(True)
-    save_logs(f'Ползователь выбрал операцию: {name4}')
     newDict1 = dict(newList)
     save_logs(f'Пользователь создал словарь: "{newDict1}"')
 
-
 # добавление данных в словарь
-def add_to_dict(repeat=True):
-    save_logs(f'Ползователь выбрал операцию: {name1}')
+def add_to_dict(repeat):
+    global newDict
     while repeat:
-        inputWindow = CreateWindow('Создание словаря')
-        inputWindow.lable('Выберите сколько элементов добавить')
-        inputWindow.lable.grid(row=0, column=0, columnspan=2, sticky='wens', ipady=5, ipadx=10, pady=5)
-        value = Spinbox(master=inputWindow.window, from_=1, to=999)
-        value.grid(row=1, column=1, pady=10, ipadx=10, ipady=10, sticky='wens')
-
-        def check_input():
-            global newDict
-            nonlocal value
-            i = int(value.get())
-            for i in range(int(value.get())):
-                inputWindow = CreateWindow('Создание словаря')
-                dict_key = CreateInput(inputWindow.window, 0, 0, 'Введите ключ')
-                dict_value = CreateInput(inputWindow.window, 1, 0, 'Введите значение')
-                button1 = CreateButtons(inputWindow.window, 'Ввод', inputWindow.window.quit)
-                button1.grid(2, 0, sticky='we', columnspan=2)
-                inputWindow.update_and_show_window()
-                newDict[dict_key.value.get()] = dict_value.value.get()
-                save_logs(f'Пользователь ввел пару ключ-значение: "{dict_key.value.get()}"-"{dict_value.value.get()}"')
-                inputWindow.window.destroy()
-            inputWindow.window.quit()
-
-        button = CreateButtons(inputWindow.window, 'Ввод', check_input)
-        button.grid(row=1, column=0, sticky='wens')
-        inputWindow.update_and_show_window()
-        repeat = repeat_func(name1, inputWindow.window)
-        messagebox.showinfo('Добавление элементов в словарь',
-                            f"Вы добавили новые элементы и полуичли новый словарь:\n {newDict}",
-                            master=inputWindow.window)
-        inputWindow.window.destroy()
-
+        while True:
+            try:
+                number = int(input('Сколько элементов вы хотите добавить?\n'))
+                if number <= 0:
+                    raise ZeroDivisionError
+                for i in range(number):
+                    key = input('Введите ключ\n')
+                    value = input('Введите значение\n')
+                    newDict[key] = value
+                    save_logs(f'Пользователь ввел пару ключ-значение: "{key}"-"{value}"')
+                break
+            except:
+                print('Введены неверные данные, повторите попытку')
+                save_logs('Пользователь ввел неверные данные')
+                continue
+        print('Ваш словарь - ', newDict)
+        # функция повтора опепрации, выдает True, если введено Y
+        repeat = continue_or_break(f'{name1}')
 
 # удаление значений из словаря
-def del_from_dict(repeat=True):
-    save_logs(f'Ползователь выбрал операцию: {name2}')
+def del_from_dict(repeat):
+    global newDict
+    print(newDict)
     while repeat:
-        inputWindow = CreateWindow('Создание словаря')
-        inputWindow.lable('Выберите элементы для удаления')
-        inputWindow.lable.pack(fill=X, ipadx=10)
-        fLeft = LabelFrame(master=inputWindow.window, text='Ваши значения в словаре')
-        fRight = LabelFrame(master=inputWindow.window, text='Список для удаления')
-        fCenter = Frame(master=inputWindow.window)
-        fLeft.pack(side=LEFT, expand=1, fill=BOTH, ipadx=5, ipady=5)
-        fCenter.pack(side=LEFT, expand=1, fill=BOTH, ipadx=5, ipady=5)
-        fRight.pack(side=RIGHT, expand=1, fill=BOTH, ipadx=5, ipady=5)
-        lbox = Listbox(fLeft, height=15, selectmode=EXTENDED)
-        scroll = Scrollbar(fLeft, command=lbox.yview)
-        scroll.pack(side=RIGHT, fill=Y)
-        lbox.config(yscrollcommand=scroll.set)
-        lbox.pack(expand=1, side=TOP, fill=BOTH, padx=5, pady=5)
-        lbox1 = Listbox(fRight, height=15, selectmode=EXTENDED)
-        scroll1 = Scrollbar(fRight, command=lbox1.yview)
-        scroll1.pack(side=RIGHT, fill=Y)
-        lbox1.config(yscrollcommand=scroll1.set)
-        lbox1.pack(expand=1, side=TOP, fill=BOTH, padx=5, pady=5)
+        while True:
+            try:
+                # вывод на печать всех пар ключ-значение
+                for key,value in newDict.items():
+                    print('Ключ - ', key,"Значение - ",value)
+                for i in range(int(input('Сколько элементов вы хотите удалить?\n'))):
+                    x = input('Введите ключ\n')
+                    save_logs(f'Ползователь удалил значение {newDict[x]}')
+                    newDict.pop(x)
+                break
+            except ValueError:
+                print('Вводите только целое число')
+                save_logs('Пользователь ввел неверное число элементов для удаления')
+                continue
+            except KeyError:
+                print('Введен неверный ключ, повторите заново')
+                save_logs('Пользователь ввел неверный ключ')
+                continue
+        print('Ваш словарь - ', newDict)
+        # функция повтора опепрации, выдает True, если введено Y
+        repeat = continue_or_break(f'{name2}')
 
-        def add_to_left_list():
-            select = list(lbox.curselection())
-            select.reverse()
-            values = []
-            for i in select:
-                values.insert(0, lbox.get(i))
-                lbox.delete(i)
-            for i in values:
-                lbox1.insert(END, i)
-
-        def add_to_right_list():
-            select = list(lbox1.curselection())
-            select.reverse()
-            values = []
-            for i in select:
-                values.insert(0, lbox1.get(i))
-                lbox1.delete(i)
-            for i in values:
-                lbox.insert(END, i)
-
-        def del_from_dict():
-            keys = []
-            for i in lbox1.get(0, END):
-                for key, value in newDict.items():
-                    if i == value:
-                        keys.append(key)
-            for i in keys:
-                newDict.pop(i)
-            messagebox.showinfo('Удаление элементов', f'Вы удалили из словаря значения:\n {lbox1.get(0, END)}',
-                                master=inputWindow.window)
-            save_logs(f'Пользователь удалил из словаря значения:\n {lbox1.get(0, END)}')
-            inputWindow.window.quit()
-
-        btn = Button(fCenter, text='>>>', command=add_to_left_list)
-        btn.pack(expand=1, anchor=S, pady=5)
-        btn2 = Button(fCenter, text='<<<', command=add_to_right_list)
-        btn2.pack(expand=1, anchor=N)
-        btn3 = Button(fCenter, text='OK', command=del_from_dict)
-        btn3.pack(expand=1, anchor=N)
-        for values in newDict.values():
-            lbox.insert(END, values)
-        inputWindow.update_and_show_window()
-        repeat = repeat_func(name2, inputWindow.window)
-        inputWindow.window.destroy()
-
-
-def swap_2_elem_in_dict(repeat=True):
+def swap_2_elem_in_dict(repeat):
     while repeat:
-        save_logs(f'Ползователь выбрал операцию: {name3}')
-        inputWindow = CreateWindow('Создание словаря')
-        inputWindow.lable('Выберите 2 значения для \nзамены значений у ключа')
-        inputWindow.lable.pack(fill=X, ipadx=10)
-        fLeft = LabelFrame(master=inputWindow.window, text='Пара ключ значение')
-        fLeft.pack(side=LEFT, expand=1, fill=BOTH, ipadx=5, ipady=5)
-        lbox = Listbox(fLeft, height=15, selectmode=EXTENDED)
-        scroll = Scrollbar(fLeft, command=lbox.yview)
-        scroll.pack(side=RIGHT, fill=Y)
-        lbox.config(yscrollcommand=scroll.set)
-        lbox.pack(expand=1, side=TOP, fill=BOTH, padx=5, pady=5)
+        global newDict
+        while True:
+            for key, value in newDict.items():
+                print('Ключ - ', key, "Значение - ", value)
+            key1 = input('Введите первый ключ\n')
+            key2 = input('Введите второе ключ\n')
+            # проверка, естьли введенные ключи в словаре
+            if key1 in newDict and key2 in newDict:
+                # замена значений местами, переменные введены для сокращения кол-ва символов
+                a,b = newDict[key1], newDict[key2]
+                a, b = b,a
+                save_logs(f'Пользователь поменял 2 значения местами: 1 значение - {a}, 2 значение - {b}\n'
+                              f'и получил словарь {newDict}')
+                break
+            else:
+                save_logs(f'Пользователь ввел неверные ключи: {key1}, {key2}')
+                print('Введены неверные ключи, повторите ввод')
+                continue
+        print('Ваш словарь - ', newDict)
+        # функция повтора опепрации, выдает True, если введено Y
+        repeat = continue_or_break(f'{name3}')
 
-        for keys, values in newDict.items():
-            lbox.insert(END, f'{keys}-{values}')
-
-        def swap_elems_in_dict():
-            if len(lbox.curselection()) != 2:
-                save_logs(f'Пользователь получил ошибку неправильного выбора')
-                return messagebox.showerror('Ошибка', 'Выберите только 2 значения', master=inputWindow.window)
-            key1 = lbox.get(lbox.curselection()[0]).split('-')
-            key2 = lbox.get(lbox.curselection()[1]).split('-')
-            newDict[key1[0]], newDict[key2[0]] = newDict[key2[0]], newDict[key1[0]]
-            save_logs(f'Пользователь поменял {newDict[key1[0]]} и {newDict[key2[0]]} местами')
-            inputWindow.window.quit()
-
-        btn = Button(fLeft, text='Ok', command=swap_elems_in_dict)
-        btn.pack(expand=1, anchor=S, pady=5)
-        inputWindow.update_and_show_window()
-        repeat = repeat_func(name3, inputWindow.window)
-        messagebox.showinfo('Новый словарь', f'Ваш новый словарь:\n{newDict}', master=inputWindow.window)
-        inputWindow.window.destroy()
-
-
-def sum_dict(repeat=True):
+def sum_dict(repeat):
     while repeat:
-        save_logs(f'Ползователь выбрал операцию: {name4}')
+        global newDict
         # вызов фукнции по созданию второго слагаемого словаря newDict1
         new_dict_to_sum()
+        print('Ваш исходный словарь - ', newDict)
+        print('Ваш словарь с которым вы складываете - ', newDict1)
         # сложение ихсодного словаря с созданным
         newDict.update(newDict1)
+        print('Ваш сложенный словарь - ', newDict)
         save_logs(f'Ползователь сложил два словаря и получил результат: {newDict}')
         # функция повтора опепрации, выдает True, если введено Y
-        messagebox.showinfo('Создание словаря', f"Вы сложили 2 словаря и получили словарь {newDict}",
-                            master=inputWindow.window)
-        inputWindow.window.destroy()
-        repeat = repeat_func(name4, mainWindow.window)
+        repeat = continue_or_break(f"{name4}")
 
-
-def make_dict_unique():
-    global newDict
-    save_logs(f'Ползователь выбрал операцию: {name5}')
-    # преобразование словаря в список формата [[],[],[]]
-    newList = list(i for i in newDict.items())
-    i = 0
-    # ПОскольу i=0 берет первый список
-    while i < len(newList):
-        j = i + 1
-        # сравнивает значение превого вложенного списка со всеми списками, по циклу проверяет все
-        # списки
-        while j < len(newList):
-            # удаляет список по индеку j елси есть совпадние значенией
-            if newList[i][1] == newList[j][1]:
-                del newList[j]
-            # если нет совпадения переходит на след список
-            else:
-                j += 1
-        # после проверки первого элемента списка, переходит ко второму и сравнивает его с каждым элементом
-        # и так далее, пока i не достигнет длины списка, то есть последнего элемента
-        i += 1
-        newDict = dict(newList)
-    messagebox.showinfo('Уникальный словарь', 'Вы сделали словарь с уникальными значениями')
-    save_logs('Ползователь удалил из словаря повторящиеся значения')
-
+def make_dict_unique(repeat):
+    while repeat:
+        global newDict
+        # преобразование словаря в список формата [[],[],[]]
+        newList = list(i for i in newDict.items())
+        i = 0
+        # ПОскольу i=0 берет первый список
+        while i < len(newList):
+            j = i + 1
+            #сравнивает значение превого вложенного списка со всеми списками, по циклу проверяет все
+            # списки
+            while j < len(newList):
+                # удаляет список по индеку j елси есть совпадние значенией
+                if newList[i][1] == newList[j][1]:
+                    del newList[j]
+                # если нет совпадения переходит на след список
+                else:
+                    j += 1
+            # после проверки первого элемента списка, переходит ко второму и сравнивает его с каждым элементом
+            # и так далее, пока i не достигнет длины списка, то есть последнего элемента
+            i += 1
+            newDict = dict(newList)
+        print('Ваш словарь - ', newDict)
+        save_logs('Ползователь удалил из словаря повторящиеся значения')
+        repeat = continue_or_break(f'{name5}')
 
 def clearDict():
-    save_logs(f'Ползователь выбрал операцию: {name6}')
-    if messagebox.askyesno("Очистка списка", 'Вы уверены, что хотите очистить словарь?'):
-        newDict.clear()
-        typeList = 'easy'
-        save_logs('Пользователь очистил словарь')
-        messagebox.showinfo('Очистка словаря', 'Вы очистили ваш словарь')
-
-
-def quit():
-    mainWindow.window.destroy()
-    save_logs('Пользователь вышел в основное меню')
-    import myProject
-    myProject.main()
-
+    global newDict
+    newDict.clear()
+    save_logs('Пользователь очистил словарь')
+    print('Ваш словарь полностью очищен')
 
 if __name__ == '__main__':
+    from csv_logs import continue_or_break, save_logs
     main()
+else:
+    from csv_logs import continue_or_break, save_logs

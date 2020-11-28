@@ -1,302 +1,231 @@
-from graphics import *
-from csv_logs import save_logs
-from tkinter import messagebox
+
 
 def main():
     global mainName, name1, name2, name3, name4, name5, name6, name7, name8, name9
-    mainName = '<<<Работа со списками>>>'
-    name1 = '<Добавление элементов в список>'
-    name2 = '<Удаление элемента из списка>'
-    name3 = '<Поменять 2 элемента списка местами>'
-    name4 = '<Поменять мах и мин значение списка местами>'
-    name5 = '<Удалить повторяющиеся значения>'
-    name6 = '<Вывести максимальный элемент списка>'
-    name7 = '<Вывести минимальный элемент списка>'
-    name8 = '<Очистить список>'
-    endProgramm = '<Выход в главное меню>'
-    listCreate()  # вызов главной фукнции
+    mainName = '"Работа со списками"'
+    name1 = '"Добавление элементов в список"'
+    name2 = '"Удаление элемента из списка"'
+    name3 = '"Поменять 2 элемента списка местами"'
+    name4 = '"Поменять мах и мин значение списка местами"'
+    name5 = '"Сложить список с новым списком"'
+    name6 = '"Удалить повторяющиеся значения"'
+    name7 = '"Вывести максимальный элемент списка"'
+    name8 = '"Вывести минимальный элемент списка"'
+    name9 = '"Очистить список"'
+    listCreate(True)# вызов главной фукнции
+    number_input()
 
-    global mainWindow
-    mainWindow = CreateWindow(mainName)
-    mainWindow.lable('Выберите программу')
-    b = {name1: add_to_list, name2: delete_elems, name3: swap_elems,
-         name4: swap_min_max_in_list, name5: delete_notUnique_elems, name6: max_in_list, name7: min_in_list,
-         name8: clearList, endProgramm: quit}
-    for i, j in b.items():
-        CreateButtons(mainWindow.window, i, j).pack(pady=5)
-    mainWindow.update_and_show_window()
 
+
+def print_list_menu():
+    print(f'''
+*****\t{mainName}\t*****
+Выберите что нужно сделать с вашим списком:
+1 - {name1}
+2 - {name2}
+3 - {name3}
+4 - {name4}
+5 - {name5}
+6 - {name6}
+7 - {name7}
+8 - {name8}
+9 - {name9}
+0 - Выйти из программы {mainName} в основное меню
+Введите цифру от 0 до 9: ''', end='')
+
+def number_input():
+    while True:
+        print_list_menu()
+        number = input()
+        if number == '1':
+            save_logs(f'Ползователь выбрал операцию: {name1}')
+            add_to_list(True)
+        elif number == '2':
+            save_logs(f'Ползователь выбрал операцию: {name2}')
+            delete_elems(True)
+        elif number == '3':
+            save_logs(f'Ползователь выбрал операцию: {name3}')
+            swap_elem_list(True)
+        elif number == '4':
+            save_logs(f'Ползователь выбрал операцию: {name4}')
+            swap_min_max_in_list(True)
+        elif number == '5':
+            save_logs(f'Ползователь выбрал операцию: {name5}')
+            listSum(True)
+        elif number == '6':
+            save_logs(f'Ползователь выбрал операцию: {name6}')
+            delete_notUnique_elems(True)
+        elif number == '7':
+            save_logs(f'Ползователь выбрал операцию: {name7}')
+            max_in_list(True)
+        elif number == '8':
+            save_logs(f'Ползователь выбрал операцию: {name8}')
+            min_in_list(True)
+        elif number == '9':
+            save_logs(f'Ползователь выбрал операцию: {name9} и очистил список')
+            yourList.clear()
+            print('Ваш список полностью очищен')
+            global listType
+            listType = 'easy'
+        elif number == '0':
+            save_logs(f'Ползователь ввел 0 и завершил программу: {mainName}')
+            print(f'Программа {mainName} завершена')
+            break
+        else:
+            save_logs(f'Ползователь неверно ввел данные')
+            print('\tВведите только числа от 0 до 9\n')
+            continue
 
 def def_list_type():
-    global typeList
+    global listType
     for i in yourList:
         if type(i) == list:
-            typeList = 'hard'
+            listType = 'hard'
         else:
-            typeList = 'easy'
+            listType = 'easy'
 
 
-def listCreate():
-    global yourList
-    yourList = []
-    inputWindow1 = CreateWindow('Создание словаря')
-    inputWindow1.lable('Выберите тип списка который хотите создать:')
+def listCreate(repeat):
+    while repeat:
+        global yourList
+        print('Для начала работы вам необходимо создать список')
+        type_of_list = input("Какой список вы хотите создать? 1 - простой список, 2 - вложенный список\n")
+        if type_of_list == "1":
+            while True:
+                listType = input("Выберите тип списка: 1 - список с одинаковыми значениями, 2 - список с уникальными"
+                                 " значениями\n")
+                if listType == "1":
+                    while True:
+                        try:
+                            yourList = [str(input("Введите элемент\n"))] * int(input("Введите количество элементов\n"))
+                        except ValueError:
+                            print("Введите верные данные")
+                            continue
+                        break
+                elif listType == "2":
+                    yourList = [str(i) for i in input("Введите элементы через пробел и нажмите Enter\n").split()]
+                else:
+                    print('Введите только 1 или 2')
+                    continue
+                break
+        elif type_of_list == "2":
+            while True:
+                try:
+                    quantity_of_lists_in_main_list = int(input("Введите кол-во вложенных списков\n"))
+                    yourList = [[str(i) for i in input("Введите элементы через пробел\n").split()] for k in
+                                range(quantity_of_lists_in_main_list)]
+                except ValueError:
+                    print('При вводе количества вложенных списков вводите только целые числа!')
+                    continue
+                break
+        else:
+            print('Введите только 1 или 2')
+            continue
+        def_list_type()
+        print("Ваш список: ", yourList)
+        save_logs(f'Пользователь создал список: "{yourList}"')
+        repeat = continue_or_break("Создание списка")
 
-    def create_easy_list():
-        yourList.clear()
-        inputWindow = CreateWindow('Создание простого словаря')
-        inputWindow.lable('Введите данные для создания')
 
-        userInput = CreateInput(inputWindow.window, 1, 0, 'Введите данные через пробел')
-
-        def check_input():
-            global yourList
-            nonlocal inputWindow1
-            yourList = [str(i) for i in userInput.value.get().split()]
-            messagebox.showinfo('Создание списка', f"Вы создали список {yourList}", master=inputWindow.window)
-            inputWindow1.window.destroy()
-            inputWindow.window.destroy()
-
-        btn = CreateButtons(inputWindow.window, 'Ввод', check_input)
-        btn.grid(2, 0, sticky='nwse')
-        inputWindow.update_and_show_window()
-
-    def create_hard_list():
-        i = 1
-        yourList.clear()
-
-        inputWindow = CreateWindow('Создание простого словаря')
-        inputWindow.lable('Введите данные для создания')
-
-        userInput = CreateInput(inputWindow.window, 1, 0, 'Внесите данные')
-
-        def check_input():
-            nonlocal i
-            i += 1
-
-            btn.name.set(f'Добавить данные в список {i}')
-            yourList.append([str(i) for i in userInput.value.get().split()])
-            userInput.value.delete(0, END)
-
-        def destroy():
-            nonlocal inputWindow1
-            messagebox.showinfo('Создание списка', f"Вы создали список {yourList}")
-            inputWindow1.window.destroy()
-            inputWindow.window.destroy()
-
-        btn = CreateButtons(inputWindow.window, f'Добавить данные в список {i}', check_input)
-        btn1 = CreateButtons(inputWindow.window, 'Exit', destroy)
-
-        btn.grid(2, 0, sticky='wnse')
-        btn1.grid(2, 1, sticky='wnse')
-
-        inputWindow.update_and_show_window()
-
-    btn = CreateButtons(inputWindow1.window, 'Простой список', create_easy_list)
-    btn1 = CreateButtons(inputWindow1.window, 'Вложенный список', create_hard_list)
-
-    btn.grid(0, 0)
-    btn1.grid(0, 1)
-
-    inputWindow1.update_and_show_window()
-    save_logs(f'Пользователь создал список: "{yourList}"')
-    def_list_type()
 
 def add_hard_list():
-    inputWindow = CreateWindow('Добавление данных в список')
-    # inputWindow.lable('Выберите элементы для удаления')
-    # inputWindow.lable.pack(fill=X, ipadx=10)
-    fLeft = LabelFrame(master=inputWindow.window, text='Ваши вложенные списки')
-    fRight = LabelFrame(master=inputWindow.window, text='Выделите список в левом столбце, введите элементы в поле и'
-                                                        'нажмите ОК')
-    fLeft.pack(side=LEFT, expand=1, fill=BOTH, ipadx=5, ipady=5)
-    fRight.pack(side=RIGHT, expand=1, fill=BOTH, ipadx=5, ipady=5)
-    lbox = Listbox(fLeft, height=15, selectmode=EXTENDED)
-    scroll = Scrollbar(fLeft, command=lbox.yview)
-    scroll.pack(side=RIGHT, fill=Y)
-    lbox.config(yscrollcommand=scroll.set)
-    lbox.pack(expand=1, side=TOP, fill=BOTH, padx=5, pady=5)
-
-    userInput = CreateInput(fRight, 0, 0, 'Введите данные')
-
-    def add_value():
-        select = lbox.curselection()
-        print(select)
-        value = userInput.value.get()
-        lbox.delete(0, END)
-        for i in select:
-            for j in value.split():
-                print(j, i)
-                yourList[i].append(j)
-        for values in yourList:
-            lbox.insert(END, values)
-        userInput.value.delete(0, END)
-
-    btn = CreateButtons(fRight, 'Ввод', add_value)
-    btn.grid(1, 0, sticky='wsne')
-
-    btn = CreateButtons(fRight, 'Выход', inputWindow.window.destroy)
-    btn.grid(1, 1, sticky='wsne')
-    # btn = Button(fRight, text='>>>', command=add_value)
-    # btn.grid()
-
-    for values in yourList:
-        lbox.insert(END, values)
-        print(values)
-    inputWindow.update_and_show_window()
-    save_logs(f'Пользователь добавил элементы и получил новый список: "{yourList}"')
+    while True:
+        global yourList
+        addPosition = input('Каким методом добавить элементы? 1 - добавить эл-ты во вложенный список,'
+                            '2 - добавить новый вложенный список\n')
+        if addPosition == '1':
+            while True:
+                try:
+                    indexAdd = int(input('Введите индекс вложенного списка в который необходимо добавить элементы\n'))
+                    for i in range(int(input('Сколько добавить элементов?\n'))):
+                        yourList[indexAdd - 1].append(input('Введите элемент\n'))
+                except:
+                    print('При вводе индекса списка произошла ошибка, вводите только числа от 1 до', len(yourList))
+                    continue
+                break
+            break
+        elif addPosition == '2':
+            yourList.append(input('Введите элементы через пробел и нажмите Enter\n').split())
+            break
+        else:
+            print('Введите только числа 1, 2')
+            continue
 
 
-def add_easy_list():
-    inputWindow = CreateWindow('Создание простого словаря')
-    inputWindow.lable('Введите данные для создания')
-
-    userInput = CreateInput(inputWindow.window, 1, 0, 'Внесите данные')
-
-    def check_input():
-        # nonlocal inputWindow1
-        # inputWindow1.window.destroy()
-        for i in userInput.value.get().split():
-            yourList.append(str(i))
-        messagebox.showinfo('Добавление элементов', f'Вы добавили элементы:\n{userInput.value.get()}')
-        inputWindow.window.destroy()
-
-    btn = CreateButtons(inputWindow.window, 'Ввод', check_input)
-    btn.grid(2, 0, sticky='wnse')
-    inputWindow.update_and_show_window()
-    save_logs(f'Пользователь добавил элементы и получил новый список: "{yourList}"')
-
-
-def add_to_list():
+def add_to_list(repeat):
     global yourList
-    save_logs(f'Пользователь запустил программу {name1}')
-    if typeList == 'hard':
-        add_hard_list()
-    else:
-        add_easy_list()
+    while repeat:
+        print("Ваш список: ", yourList)
+        if listType == 'hard':
+            add_hard_list()
+        else:
+            yourList += (input('Введите элементы через пробел и нажмите Enter\n').split())
+        save_logs(f'Пользователь добавил элементы и получил список: "{yourList}"')
+        print("Ваш список: ", yourList)
+        repeat = continue_or_break(f'{name1}')
+
 
 def swap_elem_hard_list():
-    # создание главного окна
-    inputWindow = CreateWindow('Замена данных в списке')
-
-    # создание фреймов (разделение главного окна)
-    fBottom = Label(master=inputWindow.window)
-    fBottom.pack(side=BOTTOM, expand=1, fill=BOTH, ipadx=5, ipady=5)
-
-    fLeft = LabelFrame(master=inputWindow.window, text='Выберите 2 элемента для замены')
-    fLeft.pack(side=LEFT, expand=1, fill=BOTH, ipadx=5, ipady=5)
-
-    fRight1 = Label(master=inputWindow.window)
-    fRight1.pack(side=LEFT, expand=1, fill=BOTH, ipadx=5, ipady=5)
-
-    lbox = Listbox(fLeft, height=15, selectmode=EXTENDED)
-
-    scroll = Scrollbar(fLeft, command=lbox.yview)
-    scroll.pack(side=RIGHT, fill=Y)
-
-    lbox.config(yscrollcommand=scroll.set)
-    lbox.pack(expand=1, side=RIGHT, fill=BOTH, padx=5, pady=5)
-
-    def swap_elem():
-        nonlocal lbox
-        if len(lbox.curselection()) != 2:
-            return messagebox.showerror('Ошибка', 'Выберите только 2 значения', master=inputWindow.window)
-        select = lbox.curselection()
+    while True:
+        global yourList
         try:
-            index1 = [int(i) for i in (myDict[select[0]].split('|'))]
-            index2 = [int(i) for i in (myDict[select[1]].split('|'))]
-            print(index1, index2)
-            a, b = yourList[index1[0]][index1[1]], yourList[index2[0]][index2[1]]
-            yourList[index1[0]][index1[1]], yourList[index2[0]][index2[1]] = b, a
-            save_logs(f'Пользователь поменял местами значения {a} и {b}')
-            lbox.delete(0, END)
-            myDict.clear()
-            a = 0
-            c = 0
-            for i in yourList:
-                b = 0
-                myDict[c] = lbox.insert(END, f'<Spisok {a + 1}>')
-                for j in i:
-                    lbox.insert(END, j)
-                    c += 1
-                    myDict[c] = str(a) + '|' + str(b)
-                    b += 1
-                c += 1
-                a += 1
-        except:
-            messagebox.showerror('Ошибка', "Выберите только значения из списков", master=inputWindow.window)
-        print(yourList)
+            elems = [[int(i) for i in input("Введите первый индекс\n").split()],
+                     [int(i) for i in input("Введите второй индекс\n").split()]]
+            if len(elems[0]) != 2 or len(elems[1]) != 2:
+                print("Некорректный ввод индексов! Для каждого индекса введите 2 числа")
+                continue
+            a, b = elems[0]
+            c, d = elems[1]
+            yourList[a][b], yourList[c][d] = yourList[c][d], yourList[a][b]
+            break
+        except IndexError:
+            print("Некорректный ввод индексов! Индекс вне диапазона")
+            continue
+        except ValueError:
+            print('Введите только целые числа!')
+            continue
 
-    myDict = {}
-    a = 0
-    c = 0
-    for i in yourList:
-        b = 0
-        myDict[c] = lbox.insert(END, f'<Spisok {a + 1}>')
-        for j in i:
-            lbox.insert(END, j)
-            c += 1
-            myDict[c] = str(a) + '|' + str(b)
-            b += 1
-        c += 1
-        a += 1
-    print(myDict)
-
-    btn = CreateButtons(fBottom, 'Выход', inputWindow.window.destroy)
-    btn.pack(side=BOTTOM)
-
-    btn1 = CreateButtons(fBottom, 'Выполнить', swap_elem)
-    btn1.pack(anchor=S)
-
-    inputWindow.update_and_show_window()
 
 def swap_elem_easy_list():
-    inputWindow = CreateWindow('Замена данных в списке')
+    while True:
+        global yourList
+        try:
+            index = 0
+            for i in yourList:
+                print('Элемент - ', i, "Индекс элемента - ", index)
+                index += 1
+            elem1 = int(input('Введите индекс первого элемента\n'))
+            elem2 = int(input('Введите индекс второго элемента\n'))
+            yourList[elem1], yourList[elem2] = yourList[elem2], yourList[elem1]
+            break
+        except ValueError:
+            print("Введите только числовые значения")
+            continue
+        except IndexError:
+            print("Введен неверный индекс, повторите операцию заново")
+            continue
 
-    fBottom = Label(master=inputWindow.window)
-    fBottom.pack(side=BOTTOM, expand=1, fill=BOTH, ipadx=5, ipady=5)
 
-    fLeft = LabelFrame(master=inputWindow.window, text='Выберите 2 элемента для замены')
-    fLeft.pack(side=LEFT, expand=1, fill=BOTH, ipadx=5, ipady=5)
+def swap_elem_list(repeat):
+    while repeat:
+        from copy import deepcopy
+        a = deepcopy(yourList)
+        if listType == 'hard':
+            for i in yourList:
+                index = 0
+                for j in i:
+                    print('Элемент - ', j, "Индекс элемента - ", yourList.index(i), index)
+                    index += 1
+            swap_elem_hard_list()
+        else:
+            swap_elem_easy_list()
+        print("Ваш  исходный список: ",a)
+        print("Ваш  измененный список: ", yourList)
+        save_logs(f'Пользователь поменял элементы местами и получил список: "{yourList}"')
+        repeat = continue_or_break(f'{name3}')
 
-    lbox = Listbox(fLeft, height=15, selectmode=EXTENDED)
-
-    scroll = Scrollbar(fLeft, command=lbox.yview)
-    scroll.pack(side=RIGHT, fill=Y)
-
-    lbox.config(yscrollcommand=scroll.set)
-    lbox.pack(expand=1, side=TOP, fill=BOTH, padx=5, pady=5)
-
-    for i in yourList:
-        lbox.insert(END, i)
-
-    def swap_elem():
-        select = lbox.curselection()
-        if len(lbox.curselection()) != 2:
-            return messagebox.showerror('Ошибка', 'Выберите только 2 значения', master=inputWindow.window)
-        yourList[select[0]], yourList[select[1]] = yourList[select[1]], yourList[select[0]]
-        save_logs(f'Пользователь поменял местами значения {yourList[select[0]]} и {yourList[select[1]]}')
-        lbox.delete(0, END)
-        for i in yourList:
-            lbox.insert(END, i)
-
-    btn = CreateButtons(fBottom, 'Выход', inputWindow.window.destroy)
-    btn.pack(side=BOTTOM)
-
-    btn1 = CreateButtons(fBottom, 'Выполнить', swap_elem)
-    btn1.pack(anchor=S, side=BOTTOM)
-
-    inputWindow.update_and_show_window()
-
-def swap_elems():
-    save_logs(f'Пользователь запустил программу {name3}')
-    if typeList == 'hard':
-        swap_elem_hard_list()
-    else:
-        swap_elem_easy_list()
 
 def swap_min_max_in_hard_list():
-
     global yourList, max_in_list, max_in_list
     a = yourList[0][0]
     b = a
@@ -309,9 +238,6 @@ def swap_min_max_in_hard_list():
                 b = yourList[i][j]
                 indB = [i, j]
     yourList[indA[0]][indA[1]], yourList[indB[0]][indB[1]] = b, a
-    messagebox.showinfo('Замена максимального и минимальнго значения',
-                        f'Вы поменяли мах и мин значения списка местами\n Ваш новый список {yourList}',
-                        master=mainWindow.window)
     # max_in_list, min_in_list = a, b
 
 def max_in_hard_list():
@@ -320,10 +246,8 @@ def max_in_hard_list():
         for j in i:
             if j >= a:
                 a = j
-    messagebox.showinfo('Максимальное значение', f'Максимальное значение в вашем списке - {a}',
-                        master=mainWindow.window)
+    print('Максимальное значение в вашем списке - ', a)
     save_logs(f'Пользователь получил максимальное значение: "{a}"')
-
 
 def min_in_hard_list():
     a = yourList[0][0]
@@ -331,26 +255,30 @@ def min_in_hard_list():
         for j in range(len(yourList[i])):
             if yourList[i][j] <= a:
                 a = yourList[i][j]
-    messagebox.showinfo('Минимальное значение', f'Минимальное значение в вашем списке - {a}', master=mainWindow.window)
+    print('Минимальное значение в вашем списке - ', a)
     save_logs(f'Пользователь получил минимальное значение: "{a}"')
 
-def max_in_list():
-    save_logs(f'Пользователь запустил программу {name6}')
-    if typeList == 'hard':
-        max_in_hard_list()
-    else:
-        messagebox.showinfo('Максимальное значение', f'Максимальное значение в вашем списке - {max(yourList)}',
-                            master=mainWindow.window)
-        save_logs(f'Пользователь получил максимальное значение списка: "{max(yourList)}"')
 
-def min_in_list():
-    save_logs(f'Пользователь запустил программу {name7}')
-    if typeList == 'hard':
-        min_in_hard_list()
-    else:
-        messagebox.showinfo('Минимальное значение', f'Минимальное значение в вашем списке - {min(yourList)}',
-                            master=mainWindow.window)
-        save_logs(f'Пользователь получил минимальное значение списка: "{min(yourList)}"')
+def max_in_list(repeat):
+    while repeat:
+        print("Ваш список: ", yourList)
+        if listType == 'hard':
+            max_in_hard_list()
+        else:
+            print('Максимальное значение в вашем списке -', max(yourList))
+            save_logs(f'Пользователь получил максимальное значение списка: "{max(yourList)}"')
+        repeat = continue_or_break(f"{name7}")
+
+def min_in_list(repeat):
+    while repeat:
+        print("Ваш список: ", yourList)
+        if listType == 'hard':
+            min_in_hard_list()
+        else:
+            print('Минимальное значение в вашем списке - ', min(yourList))
+            save_logs(f'Пользователь получил минимальное значение списка: "{min(yourList)}"')
+        repeat = continue_or_break(f"{name8}")
+
 
 def swap_min_max_in_easy_list():
     global yourList, max_in_list, max_in_list
@@ -360,169 +288,151 @@ def swap_min_max_in_easy_list():
     indB = yourList.index(b)
     yourList[indA], yourList[indB] = b, a
     max_in_list, min_in_list = a, b
-    messagebox.showinfo('Замена максимального и минимальнго значения',
-                        f'Вы поменяли мах и мин значения списка местами\n Ваш новый список {yourList}',
-                        master=mainWindow.window)
 
-def swap_min_max_in_list():
-    save_logs(f'Пользователь запустил программу {name4}')
-    if typeList == 'hard':
-        swap_min_max_in_hard_list()
-    else:
-        swap_min_max_in_easy_list()
-    save_logs(f'Пользователь поменял максимальный и минимальный элементы местами и получил список: "{yourList}"')
 
-def delete_notUnique_elems():
-    save_logs(f'Пользователь запустил программу {name5}')
-    if typeList == 'hard':
-        count = 0
-        for i in yourList:
-            for j in i:
-                if i.count(j) > 1:
-                    while i.count(j) > 1:
-                        i.remove(j)
-                        save_logs(f'Пользователь удалил повторящиеся значения элемента: "{j}"')
+def swap_min_max_in_list(repeat):
+    while repeat:
+        print("Ваш исходный список: ", yourList)
+        if listType == 'hard':
+            swap_min_max_in_hard_list()
+        else:
+            swap_min_max_in_easy_list()
+        print("Ваш измененный список список: ", yourList)
+        save_logs(f'Пользователь поменял максимальный и минимальный элементы местами и получил список: "{yourList}"')
+        repeat = continue_or_break(f'{name4}')
+
+
+def listSum(repeat):
+    while repeat:
+        print("Ваш список: ", yourList)
+        what_to_do = input("Создайте второй список для сложения? 1 -  создать простой список, 2 - создать вложенный список\n")
+        if what_to_do == "1":
+            while True:
+                listType = input(
+                    "Выберите тип списка: 1 - список с одинаковыми значениями, 2 - список с уникальными"
+                    " значениями\n")
+                if listType == "1":
+                    while True:
+                        try:
+                            secondList = [input("Введите элемент\n")] * int(input("Введите количество элементов\n"))
+                        except ValueError:
+                            print("Введите верные данные")
+                            continue
+                        break
+                elif listType == "2":
+                    secondList = [i for i in input("Введите элементы через пробел и нажмите Enter\n").split()]
                 else:
-                    save_logs(f'Кол-во вхождений элемента: "{j}" равно единице')
-    else:
-        for i in yourList:
-            if yourList.count(i) > 1:
-                while yourList.count(i) > 1:
-                    yourList.remove(i)
-                    save_logs(f'Пользователь удалил повторящиеся значения элемента: "{i}"')
-            else:
-                save_logs(f'Кол-во вхождений элемента: "{i}" равно единице')
-    messagebox.showinfo('Уникальный список',
-                        f"Вы удалили все повторяющиеся значения в списке\nВаш список: {yourList}",
-                        master=mainWindow.window)
+                    print('Введите только 1 или 2')
+                    continue
+                break
+        elif what_to_do == "2":
+            while True:
+                try:
+                    quantity_of_lists_in_main_list = int(input("Введите кол-во вложенных списков\n"))
+                    secondList = [[i for i in input("Введите элементы через пробел\n").split()] for k in
+                                  range(quantity_of_lists_in_main_list)]
+                except ValueError:
+                    print('При вводе количества вложенных списков вводите только целые числа!')
+                    continue
+                break
+        sumList = yourList + secondList
+        print('Результаты суммы списков - ',sumList)
+        save_logs(f'Пользователь сложил список {yourList} со списком {secondList} и получил новый списко: "{sumList}"')
+        repeat = continue_or_break(f'{name5}')
 
-def delete_elems():
-    save_logs(f'Пользователь запустил программу {name2}')
-    if typeList == 'hard':
-        delete_elems_hard_list()
-    else:
-        delete_elems_easy_list()
+
+def delete_notUnique_elems(repeat):
+    while repeat:
+        print("Ваш список: ", yourList)
+        delElem = input('Выберите элемент для удаления\n')
+        if listType == 'hard':
+            count = 0
+            for i in yourList:
+                if delElem in i:
+                    if i.count(delElem) > 1:
+                        while i.count(delElem) > 1:
+                            i.remove(delElem)
+                            save_logs(f'Пользователь удалил повторящиеся значения элемента: "{delElem}"')
+                    else:
+                        print('Кол-во вхождений элемента', delElem,'в список', i, 'равно единице')
+                        save_logs(f'Кол-во вхождений элемента: "{delElem}" равно единице')
+                else:
+                    print('Элемента',delElem, 'нет в списке', i)
+                    save_logs(f'Элемента: "{delElem}" нет в списке')
+        else:
+            if delElem in yourList:
+                if yourList.count(delElem) > 1:
+                    while yourList.count(delElem) > 1:
+                        yourList.remove(delElem)
+                        save_logs(f'Пользователь удалил повторящиеся значения элемента: "{delElem}"')
+                else:
+                    print("Кол-во его вхождений элемента равно единице, выберите другой элемент")
+                    save_logs(f'Кол-во вхождений элемента: "{delElem}" равно единице')
+            else:
+                print("Такого элемента нет в списке")
+                save_logs(f'Элемента: "{delElem}" нет в списке')
+        print("Ваш список: ", yourList)
+        repeat = continue_or_break(f'{name6}')
+
+def delete_elems(repeat):
+    while repeat:
+        print("Ваш список: ", yourList)
+        if listType == 'hard':
+            for i in yourList:
+                index = 0
+                for j in i:
+                    print('Элемент - ', j, "Индекс элемента - ", yourList.index(i), index)
+                    index += 1
+            delete_elems_hard_list()
+        else:
+            delete_elems_easy_list()
+        print("Ваш список: ", yourList)
+        repeat = continue_or_break(f'{name2}')
 
 def delete_elems_hard_list():
-    inputWindow = CreateWindow('Удаление элементов из списка')
-
-    # создание фреймов (разделение главного окна)
-    fBottom = Label(master=inputWindow.window)
-    fBottom.pack(side=BOTTOM, expand=1, fill=BOTH, ipadx=5, ipady=5)
-
-    fLeft = LabelFrame(master=inputWindow.window, text='Выберите элемент для удаления')
-    fLeft.pack(side=LEFT, expand=1, fill=BOTH, ipadx=5, ipady=5)
-
-    fRight1 = Label(master=inputWindow.window)
-    fRight1.pack(side=LEFT, expand=1, fill=BOTH, ipadx=5, ipady=5)
-
-    lbox = Listbox(fLeft, height=15)
-
-    scroll = Scrollbar(fLeft, command=lbox.yview)
-    scroll.pack(side=RIGHT, fill=Y)
-
-    lbox.config(yscrollcommand=scroll.set)
-    lbox.pack(expand=1, side=RIGHT, fill=BOTH, padx=5, pady=5)
-
-    def swap_elem():
-        nonlocal lbox
-        select = lbox.curselection()
+    while True:
+        global yourList
         try:
-            index = [int(i) for i in (myDict[select[0]].split('|'))]
-            del yourList[index[0]][index[1]]
-            save_logs(f'Пользователь удалил значение {yourList[index[0]][index[1]]} из списка')
-            lbox.delete(0, END)
-            myDict.clear()
-            a = 0
-            c = 0
-            for i in yourList:
-                b = 0
-                myDict[c] = lbox.insert(END, f'<Spisok {a + 1}>')
-                for j in i:
-                    lbox.insert(END, j)
-                    c += 1
-                    myDict[c] = str(a) + '|' + str(b)
-                    b += 1
-                c += 1
-                a += 1
-        except:
-            messagebox.showerror('Ошибка', "Выберите только значения из списков")
-        print(yourList)
-
-    myDict = {}
-    a = 0
-    c = 0
-    for i in yourList:
-        b = 0
-        myDict[c] = lbox.insert(END, f'<Spisok {a + 1}>')
-        for j in i:
-            lbox.insert(END, j)
-            c += 1
-            myDict[c] = str(a) + '|' + str(b)
-            b += 1
-        c += 1
-        a += 1
-    print(myDict)
-
-    btn = CreateButtons(fBottom, 'Выход', inputWindow.window.destroy)
-    btn.pack(side=BOTTOM)
-
-    btn1 = CreateButtons(fBottom, 'Выполнить', swap_elem)
-    btn1.pack(anchor=S)
-
-    inputWindow.update_and_show_window()
+            elems = [int(i) for i in input("Введите индекс\n").split()]
+            if len(elems) != 2:
+                print("Некорректный ввод индексов! Для каждого индекса введите 2 числа")
+                continue
+            a, b = elems[0], elems[1]
+            save_logs(f'Пользователь удалил элемент: "{yourList[a][b]}')
+            del yourList[a][b]
+            break
+        except IndexError:
+            print("Некорректный ввод индексов! Индекс вне диапазона")
+            save_logs(f'Пользователь ввел неверные данные')
+            continue
+        except ValueError:
+            print('Введите только целые числа!')
+            save_logs(f'Пользователь ввел неверные данные')
+            continue
 
 def delete_elems_easy_list():
-    inputWindow = CreateWindow('Удаление элементов из спика')
-
-    fBottom = Label(master=inputWindow.window)
-    fBottom.pack(side=BOTTOM, expand=1, fill=BOTH, ipadx=5, ipady=5)
-
-    fLeft = LabelFrame(master=inputWindow.window, text='Выберите элемент в списке для удаления')
-    fLeft.pack(side=LEFT, expand=1, fill=BOTH, ipadx=5, ipady=5)
-
-    lbox = Listbox(fLeft, height=15)
-
-    scroll = Scrollbar(fLeft, command=lbox.yview)
-    scroll.pack(side=RIGHT, fill=Y)
-
-    lbox.config(yscrollcommand=scroll.set)
-    lbox.pack(expand=1, side=TOP, fill=BOTH, padx=5, pady=5)
-
-    for i in yourList:
-        lbox.insert(END, i)
-
-    def swap_elem():
-        select = lbox.curselection()
-        save_logs(f'Пользователь удалил значение {yourList[select[0]]} из списка')
-        del yourList[select[0]]
-        lbox.delete(0, END)
-        for i in yourList:
-            lbox.insert(END, i)
-
-    btn = CreateButtons(fBottom, 'Выход', inputWindow.window.destroy)
-    btn.pack(side=BOTTOM)
-
-    btn1 = CreateButtons(fBottom, 'Удалить', swap_elem)
-    btn1.pack(anchor=S, side=BOTTOM)
-
-    inputWindow.update_and_show_window()
-
-def clearList():
-    save_logs(f'Пользователь запустил программу {name8}')
-    if messagebox.askyesno("Очистка списка", 'Вы уверены, что хотите очистить словарь?'):
-        global yourList, typeList
-        yourList.clear()
-        typeList = 'easy'
-        messagebox.showinfo('Очистка списка', 'Ваш список очищен')
-        save_logs(f'Пользователь очистил список')
-
-def quit():
-    mainWindow.window.destroy()
-    save_logs('Пользователь вышел в основное меню')
-    import myProject
-    myProject.main()
+    while True:
+        global yourList
+        try:
+            index = 0
+            for i in yourList:
+                print('Элемент - ', i, "Индекс элемента - ", index)
+                index += 1
+            elem = int(input('Введите индекс элемента\n'))
+            save_logs(f'Пользователь удалил элемент: {yourList[elem]}')
+            del yourList[elem]
+            break
+        except ValueError:
+            print("Введите только числовые значения")
+            save_logs(f'Пользователь ввел неверные данные')
+            continue
+        except IndexError:
+            print("Введен неверный индекс, повторите операцию заново")
+            save_logs(f'Пользователь ввел неверные данные')
+            continue
 
 if __name__ == '__main__':
+    from csv_logs import continue_or_break, save_logs
     main()
-
+else:
+    from csv_logs import continue_or_break, save_logs
